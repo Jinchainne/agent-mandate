@@ -48,7 +48,6 @@ The steward sees real wallet writes, accepted receipt waiting, and refreshed on-
 
 ## Links
 
-- Website: deployment pending
-- GitHub: deployment pending
-- Contract: deployment pending
-
+- Website: https://agent-mandate.vercel.app/
+- GitHub: https://github.com/Jinchainne/agent-mandate
+- Contract: https://explorer-bradbury.genlayer.com/address/0x74D9b10d6D4274e9B73C507CDB3AE2E67874f617

@@ -5,7 +5,7 @@ export const RPC_URL = "https://rpc-bradbury.genlayer.com";
 export const EXPLORER_URL = "https://explorer-bradbury.genlayer.com";
 export const CONTRACT_ADDRESS =
   (import.meta.env.VITE_AGENT_MANDATE_ADDRESS as string) ||
-  "0x0000000000000000000000000000000000000000";
+  "0x74D9b10d6D4274e9B73C507CDB3AE2E67874f617";
 
 function address() {
   if (!/^0x[a-fA-F0-9]{40}$/.test(CONTRACT_ADDRESS) || /^0x0{40}$/.test(CONTRACT_ADDRESS)) {
@@ -88,4 +88,3 @@ export async function readAppeal(id: number) {
 export async function readPolicy() {
   return readClient().readContract({ address: address(), functionName: "get_policy", args: [] });
 }
-

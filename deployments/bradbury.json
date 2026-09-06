@@ -2,11 +2,10 @@
   "network": "testnet-bradbury",
   "chainId": 4221,
   "contract": "AgentMandate",
-  "address": "0x0000000000000000000000000000000000000000",
-  "deploymentTransaction": "",
+  "address": "0x74D9b10d6D4274e9B73C507CDB3AE2E67874f617",
+  "deploymentTransaction": "0x0dddb623cd88017a58f40397661599fdd9114a13c7004863d4229d0fe359600e",
   "source": "contracts/agent_mandate.py",
-  "sourceSha256": "",
-  "deployedAt": "",
-  "status": "PENDING"
+  "sourceSha256": "1c596ed4cd4576949e7a60fd9c460a856ec295a7b7d9a7a84336df269f2c67af",
+  "deployedAt": "2026-09-06T03:55:33Z",
+  "status": "ACCEPTED"
 }
-
