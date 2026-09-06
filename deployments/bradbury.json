@@ -1,0 +1,12 @@
+{
+  "network": "testnet-bradbury",
+  "chainId": 4221,
+  "contract": "AgentMandate",
+  "address": "0x0000000000000000000000000000000000000000",
+  "deploymentTransaction": "",
+  "source": "contracts/agent_mandate.py",
+  "sourceSha256": "",
+  "deployedAt": "",
+  "status": "PENDING"
+}
+
