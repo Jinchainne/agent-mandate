@@ -21,5 +21,8 @@ for (const marker of [
 ]) if (!contract.includes(marker)) throw new Error(`Contract invariant missing: ${marker}`);
 if (!client.includes("waitForTransactionReceipt")) throw new Error("Receipt wait missing");
 if (!app.includes("refreshMandates")) throw new Error("Authoritative refresh missing");
+if (!app.includes('crypto.subtle.digest("SHA-256"') || !app.includes('protocol: "agent-mandate/1.0"')) {
+  throw new Error("Agent manifest or immutable evidence preflight missing");
+}
 
-console.log("AgentMandate verification passed: consensus, settlement, appeals, and UI bindings align.");
+console.log("AgentMandate verification passed: consensus, settlement, appeals, evidence preflight, agent manifest, and UI bindings align.");

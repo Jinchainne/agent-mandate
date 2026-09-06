@@ -40,3 +40,11 @@ test("submission artifacts expose reviewer verification paths", () => {
   assert.ok(walkthrough.includes("Expected verification outcome"));
 });
 
+test("agent kit exports executable protocol data and evidence preflight is real", () => {
+  const app = read("src/App.tsx");
+  assert.ok(app.includes('protocol: "agent-mandate/1.0"'));
+  assert.ok(app.includes('crypto.subtle.digest("SHA-256"'));
+  assert.ok(app.includes("readPolicy"));
+  assert.ok(app.includes("Copy agent manifest"));
+  assert.ok(app.includes("Complete integrity preflight"));
+});

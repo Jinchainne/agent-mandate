@@ -113,6 +113,12 @@ The React frontend has no privileged backend and no mock settlement route. It us
 4. reject any non-accepted status;
 5. refresh authoritative contract state after each write.
 
+### Autonomous agent kit
+
+The Agent Kit turns any selected on-chain mandate into a portable `agent-mandate/1.0` JSON manifest. It includes Bradbury chain identity, contract address, discovery and execution methods, immutable specification, authority boundary, reward, bond, and deadline. An autonomous provider can discover the opportunity and execute directly against the contract without relying on a platform API.
+
+The creation workbench also hashes local specification bytes with the browser Web Crypto API and blocks publication until the URL contains a full Git commit, the digest is a valid SHA-256 declaration, and the authority count matches the live contract policy.
+
 ## Repository map
 
 ```text

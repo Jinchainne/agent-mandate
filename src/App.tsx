@@ -6,12 +6,22 @@ import {
   listMandateIds,
   readAppeal,
   readMandate,
+  readPolicy,
   walletClient,
   writes,
 } from "./lib/genlayer";
 import type { Appeal, Mandate } from "./types";
 
-type View = "docket" | "create" | "protocol";
+type View = "docket" | "create" | "agent-kit" | "protocol";
+
+type ProtocolPolicy = {
+  appeal_grounds: string[];
+  immutable_policy: string;
+  max_authorities: number;
+  max_content_bytes: number;
+  resolution_timeout_seconds: number;
+  review_window_seconds: number;
+};
 
 const ZERO = "0x0000000000000000000000000000000000000000";
 
@@ -46,12 +56,19 @@ function defaultDeadline() {
   return value.toISOString().slice(0, 16);
 }
 
+async function sha256(file: File) {
+  const bytes = await file.arrayBuffer();
+  const hash = await crypto.subtle.digest("SHA-256", bytes);
+  return `sha256:${Array.from(new Uint8Array(hash), (byte) => byte.toString(16).padStart(2, "0")).join("")}`;
+}
+
 function App() {
   const [view, setView] = useState<View>("docket");
   const [account, setAccount] = useState<`0x${string}` | "">("");
   const [mandates, setMandates] = useState<Mandate[]>([]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [appealRecord, setAppealRecord] = useState<Appeal | null>(null);
+  const [policy, setPolicy] = useState<ProtocolPolicy | null>(null);
   const [busy, setBusy] = useState("");
   const [notice, setNotice] = useState("Reading the Bradbury mandate ledger");
 
@@ -74,6 +91,11 @@ function App() {
   });
 
   const selected = mandates.find((item) => Number(item.id) === selectedId) ?? null;
+  const authorityCount = draft.authorities.split("\n").map((value) => value.trim()).filter(Boolean).length;
+  const pinnedSpec = /^(https:\/\/github\.com\/[^/]+\/[^/]+\/blob\/[a-fA-F0-9]{40}\/.+|https:\/\/raw\.githubusercontent\.com\/[^/]+\/[^/]+\/[a-fA-F0-9]{40}\/.+)$/.test(draft.specUrl);
+  const validSpecDigest = /^sha256:[a-fA-F0-9]{64}$/.test(draft.specDigest);
+  const validAuthorities = authorityCount > 0 && authorityCount <= (policy?.max_authorities ?? 3);
+  const draftReady = pinnedSpec && validSpecDigest && validAuthorities;
   const policyBoundToExecution = Boolean(
     selected?.settled && (selected.verdict === "PASS" || selected.verdict === "FAIL"),
   );
@@ -95,6 +117,7 @@ function App() {
 
   useEffect(() => {
     void refreshMandates();
+    void (readPolicy() as Promise<ProtocolPolicy>).then(setPolicy).catch(() => setPolicy(null));
   }, []);
 
   useEffect(() => {
@@ -139,6 +162,36 @@ function App() {
     return <button className={className} disabled={Boolean(busy)} onClick={action}>{busy === label ? "Consensus pending..." : label}</button>;
   }
 
+  function agentManifest() {
+    return JSON.stringify({
+      protocol: "agent-mandate/1.0",
+      network: { name: "GenLayer Bradbury", chainId: 4221, contract: CONTRACT_ADDRESS },
+      discovery: { list: "list_mandate_ids", read: "get_mandate", policy: "get_policy" },
+      execution: { accept: "accept_mandate", submit: "submit_work", evaluate: "evaluate", cure: "submit_cure", appeal: "file_appeal" },
+      integrity: policy ?? { immutable_policy: "full_commit_github_plus_sha256", max_authorities: 3, max_content_bytes: 32000 },
+      mandate: selected ? {
+        id: Number(selected.id), state: selected.state, title: selected.title, brief: selected.brief,
+        specification: { url: selected.spec_url, digest: selected.spec_digest },
+        authorities: selected.authority_urls, rewardWei: selected.reward,
+        providerBondWei: selected.provider_bond_required, workDeadline: selected.work_deadline,
+      } : null,
+    }, null, 2);
+  }
+
+  async function copyManifest() {
+    await navigator.clipboard.writeText(agentManifest());
+    setNotice("Machine-readable agent manifest copied");
+  }
+
+  function downloadManifest() {
+    const anchor = document.createElement("a");
+    anchor.href = URL.createObjectURL(new Blob([agentManifest()], { type: "application/json" }));
+    anchor.download = selected ? `mandate-${selected.id}.json` : "agent-mandate-protocol.json";
+    anchor.click();
+    URL.revokeObjectURL(anchor.href);
+    setNotice("Agent manifest exported");
+  }
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -147,8 +200,8 @@ function App() {
           <span><b>AgentMandate</b><small>work that settles itself</small></span>
         </button>
         <nav aria-label="Primary navigation">
-          {(["docket", "create", "protocol"] as View[]).map((item) => (
-            <button key={item} className={view === item ? "active" : ""} onClick={() => setView(item)}>{item}</button>
+          {(["docket", "create", "agent-kit", "protocol"] as View[]).map((item) => (
+            <button key={item} className={view === item ? "active" : ""} onClick={() => setView(item)}>{item.replace("-", " ")}</button>
           ))}
         </nav>
         <button className="wallet" onClick={connect}>{account ? short(account) : "Connect wallet"}</button>
@@ -245,12 +298,47 @@ function App() {
             <div className="form-title"><span>02</span><h2>Locked acceptance law</h2></div>
             <label>Specification URL<input required value={draft.specUrl} onChange={(e) => setDraft({ ...draft, specUrl: e.target.value })} placeholder="https://github.com/org/repo/blob/<40-char-commit>/mandate.md" /></label>
             <label>Specification SHA-256<input required value={draft.specDigest} onChange={(e) => setDraft({ ...draft, specDigest: e.target.value })} /></label>
+            <label className="file-hash">Digest local specification bytes (optional)<input type="file" accept=".md,.txt,.json,.yaml,.yml" onChange={(event) => { const file = event.target.files?.[0]; if (file) void sha256(file).then((digest) => { setDraft({ ...draft, specDigest: digest }); setNotice(`SHA-256 generated from ${file.name}`); }); }} /></label>
             <label>Live authority URLs<textarea required value={draft.authorities} onChange={(e) => setDraft({ ...draft, authorities: e.target.value })} placeholder="One public authoritative HTTPS URL per line, maximum three" /></label>
+            <div className="preflight-panel">
+              <span className={pinnedSpec ? "pass" : ""}><i /> Full 40-character commit pin</span>
+              <span className={validSpecDigest ? "pass" : ""}><i /> SHA-256 content declaration</span>
+              <span className={validAuthorities ? "pass" : ""}><i /> {authorityCount || 0}/{policy?.max_authorities ?? 3} live authorities declared</span>
+            </div>
             <div className="form-title"><span>03</span><h2>Economic commitment</h2></div>
             <div className="form-pair"><label>Reward in test GEN<input required value={draft.reward} onChange={(e) => setDraft({ ...draft, reward: e.target.value })} /></label><label>Provider bond in test GEN<input required value={draft.bond} onChange={(e) => setDraft({ ...draft, bond: e.target.value })} /></label></div>
             <label>Work deadline<input required type="datetime-local" value={draft.deadline} onChange={(e) => setDraft({ ...draft, deadline: e.target.value })} /></label>
-            <button className="wide" disabled={Boolean(busy)}>{busy === "Create mandate" ? "Waiting for consensus..." : "Fund and publish mandate"}</button>
+            <button className="wide" disabled={Boolean(busy) || !draftReady}>{busy === "Create mandate" ? "Waiting for consensus..." : draftReady ? "Fund and publish mandate" : "Complete integrity preflight"}</button>
           </form>
+        </main>
+      )}
+
+      {view === "agent-kit" && (
+        <main className="agent-layout">
+          <section className="agent-hero">
+            <div><span className="section-kicker">Machine interface</span><h1>Give an agent<br />the whole mission.</h1></div>
+            <p>Export the chain, contract, callable lifecycle, immutable specification, economic terms, and live authority boundary as one portable JSON instruction. No platform API or trusted coordinator is required.</p>
+          </section>
+          <section className="agent-console">
+            <aside className="agent-sidebar">
+              <span className="section-kicker">On-chain telemetry</span>
+              <div className="telemetry"><b>{mandates.length}</b><small>total mandates</small></div>
+              <div className="telemetry"><b>{mandates.filter((item) => !item.settled && !["CANCELLED", "REFUNDED"].includes(item.state)).length}</b><small>live opportunities</small></div>
+              <div className="telemetry"><b>{mandates.filter((item) => item.state === "SETTLED").length}</b><small>settled outcomes</small></div>
+              <label>Manifest target<select value={selectedId ?? ""} onChange={(event) => setSelectedId(event.target.value ? Number(event.target.value) : null)}><option value="">Protocol only</option>{mandates.map((item) => <option key={item.id} value={item.id}>#{item.id} {item.title}</option>)}</select></label>
+              <button onClick={() => void copyManifest()}>Copy agent manifest</button>
+              <button className="secondary" onClick={downloadManifest}>Download JSON</button>
+            </aside>
+            <div className="manifest-terminal">
+              <div className="terminal-head"><span><i /> LIVE CONTRACT MANIFEST</span><span>CHAIN 4221</span></div>
+              <pre>{agentManifest()}</pre>
+            </div>
+          </section>
+          <section className="agent-path">
+            <article><span>01 / DISCOVER</span><h3>Read public opportunities</h3><p>An agent calls <code>list_mandate_ids</code> and <code>get_mandate</code>, then filters by reward, bond, authority set, and deadline.</p></article>
+            <article><span>02 / EXECUTE</span><h3>Commit capital and work</h3><p>The provider accepts with the exact bond and submits artifact bytes anchored to an immutable commit and SHA-256 digest.</p></article>
+            <article><span>03 / RECOURSE</span><h3>Cure or contest safely</h3><p>Consensus can require one exact cure. A losing agent may invoke a bonded appeal with an explicit machine-readable ground.</p></article>
+          </section>
         </main>
       )}
 
