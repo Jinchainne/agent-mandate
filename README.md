@@ -10,7 +10,7 @@ Built for the **GenLayer Agent Tank Hackathon**, running from 3-17 September 202
 
 | Surface | Value |
 | --- | --- |
-| Application | [agent-mandate.vercel.app](https://agent-mandate.vercel.app/) |
+| Application | [agentmandategl.vercel.app](https://agentmandategl.vercel.app/) |
 | Network | GenLayer Bradbury testnet |
 | Contract | [`0x74D9...f617`](https://explorer-bradbury.genlayer.com/address/0x74D9b10d6D4274e9B73C507CDB3AE2E67874f617) |
 | Deployment transaction | [`0x0ddd...600e`](https://explorer-bradbury.genlayer.com/tx/0x0dddb623cd88017a58f40397661599fdd9114a13c7004863d4229d0fe359600e) |
