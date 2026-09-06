@@ -3,6 +3,8 @@ import fs from "node:fs";
 const contract = fs.readFileSync("contracts/agent_mandate.py", "utf8");
 const client = fs.readFileSync("src/lib/genlayer.ts", "utf8");
 const app = fs.readFileSync("src/App.tsx", "utf8");
+const agent = fs.readFileSync("agent/policy-engine.mjs", "utf8");
+const scout = fs.readFileSync("agent/scout.mjs", "utf8");
 
 const methods = [
   "create_mandate", "accept_mandate", "submit_work", "evaluate",
@@ -24,5 +26,11 @@ if (!app.includes("refreshMandates")) throw new Error("Authoritative refresh mis
 if (!app.includes('crypto.subtle.digest("SHA-256"') || !app.includes('protocol: "agent-mandate/1.0"')) {
   throw new Error("Agent manifest or immutable evidence preflight missing");
 }
+for (const marker of ["evaluateOpportunity", "rankOpportunities", "policy constraint(s)"]) {
+  if (!agent.includes(marker)) throw new Error(`Opportunity agent capability missing: ${marker}`);
+}
+if (!scout.includes('functionName: "list_mandate_ids"') || !app.includes("Authorize top acceptance")) {
+  throw new Error("Autonomous perception or contract action boundary missing");
+}
 
-console.log("AgentMandate verification passed: consensus, settlement, appeals, evidence preflight, agent manifest, and UI bindings align.");
+console.log("AgentMandate verification passed: consensus, settlement, appeals, evidence preflight, agent runtime, and UI bindings align.");

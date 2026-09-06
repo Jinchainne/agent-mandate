@@ -47,4 +47,7 @@ test("agent kit exports executable protocol data and evidence preflight is real"
   assert.ok(app.includes("readPolicy"));
   assert.ok(app.includes("Copy agent manifest"));
   assert.ok(app.includes("Complete integrity preflight"));
+  assert.ok(app.includes("runAgentCycle"));
+  assert.ok(app.includes("Authorize top acceptance"));
+  assert.ok(read("agent/scout.mjs").includes('functionName: "list_mandate_ids"'));
 });

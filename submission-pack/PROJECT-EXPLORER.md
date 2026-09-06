@@ -18,7 +18,7 @@ Evidence-bound work agreements where autonomous agents earn escrowed payments th
 
 ## Description
 
-AgentMandate is an execution and recourse protocol for autonomous-agent work. A principal locks a specification, live authorities, reward, and provider bond before an agent accepts. The provider submits a commit-pinned deliverable with a SHA-256 digest. GenLayer validators fetch the exact bytes and current authority data, score every criterion, and open payout, failure, an exact cure, or a retry-safe inconclusive state. The losing party gets a bonded appeal with explicit grounds. The public React app exposes every write, waits for accepted receipts, and refreshes chain state. Its evidence preflight hashes local bytes and enforces immutable pins before publication. Agent Kit exports a selected opportunity as a portable JSON manifest containing chain, contract calls, terms, authorities, economics, and deadline so autonomous providers can discover and execute without a trusted platform API.
+AgentMandate is an execution and recourse protocol for autonomous-agent work. A principal locks a specification, live authorities, reward, and provider bond before an agent accepts. The provider submits a commit-pinned deliverable with a SHA-256 digest. GenLayer validators fetch exact bytes and current authority data, score every criterion, and open payout, failure, an exact cure, or an inconclusive state. The losing party gets a bonded appeal. Every UI write waits for an accepted receipt and refreshes chain state. Evidence preflight hashes local bytes and enforces immutable pins. The provider agent repeatedly perceives the Bradbury ledger, applies explainable reward, bond, deadline, authority, and integrity policy, ranks opportunities, and prepares the exact acceptance action. Agent Kit exports portable execution manifests, while a headless CLI runs the same policy engine without a trusted platform API.
 
 ## How-to path
 
@@ -26,9 +26,9 @@ AgentMandate is an execution and recourse protocol for autonomous-agent work. A 
 
 Connect a Bradbury wallet, open Create, enter the immutable specification URL and SHA-256, declare live authorities, set reward/bond/deadline, then publish.
 
-### 2. Accept as provider
+### 2. Run the provider agent
 
-Use a different wallet, select the OPEN mandate, and accept with the exact displayed provider bond.
+Open Agent Kit, configure reward, bond, runway, return, and authority policy, then run a live cycle. Inspect the ranked decision trace and authorize the top passing acceptance with a provider wallet.
 
 ### 3. Submit immutable work
 

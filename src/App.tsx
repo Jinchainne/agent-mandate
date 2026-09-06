@@ -11,6 +11,8 @@ import {
   writes,
 } from "./lib/genlayer";
 import type { Appeal, Mandate } from "./types";
+import { rankOpportunities } from "../agent/policy-engine.mjs";
+import type { AgentDecision, AgentPolicy } from "../agent/policy-engine.mjs";
 
 type View = "docket" | "create" | "agent-kit" | "protocol";
 
@@ -69,6 +71,16 @@ function App() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [appealRecord, setAppealRecord] = useState<Appeal | null>(null);
   const [policy, setPolicy] = useState<ProtocolPolicy | null>(null);
+  const [agentPolicy, setAgentPolicy] = useState<AgentPolicy>({
+    minRewardGen: "0.01",
+    maxBondGen: "0.05",
+    minReturnMultiple: 2,
+    minLeadHours: 12,
+    authorityDomain: "",
+  });
+  const [agentDecisions, setAgentDecisions] = useState<AgentDecision[]>([]);
+  const [agentCycle, setAgentCycle] = useState(0);
+  const [watchMode, setWatchMode] = useState(false);
   const [busy, setBusy] = useState("");
   const [notice, setNotice] = useState("Reading the Bradbury mandate ledger");
 
@@ -130,6 +142,12 @@ function App() {
       .catch(() => setAppealRecord(null));
   }, [selected?.appeal_id]);
 
+  useEffect(() => {
+    if (!watchMode) return;
+    const timer = window.setInterval(() => void runAgentCycle(true), 15000);
+    return () => window.clearInterval(timer);
+  }, [watchMode, agentPolicy]);
+
   async function transact(label: string, action: (client: ReturnType<typeof walletClient>) => Promise<unknown>) {
     if (!account) {
       setNotice("Connect a Bradbury wallet before signing a transaction");
@@ -190,6 +208,41 @@ function App() {
     anchor.click();
     URL.revokeObjectURL(anchor.href);
     setNotice("Agent manifest exported");
+  }
+
+  async function runAgentCycle(silent = false) {
+    if (!silent) {
+      setBusy("Agent scan");
+      setNotice("Agent is perceiving the Bradbury mandate ledger");
+    }
+    try {
+      const rawIds = (await listMandateIds()) as Array<number | bigint>;
+      const records = await Promise.all(rawIds.map((id) => readMandate(Number(id)) as Promise<Mandate>));
+      records.sort((a, b) => Number(b.id) - Number(a.id));
+      const decisions = rankOpportunities(records, agentPolicy);
+      startTransition(() => {
+        setMandates(records);
+        setAgentDecisions(decisions);
+        setAgentCycle(Date.now());
+      });
+      const executable = decisions.filter((decision) => decision.decision === "ACCEPT").length;
+      setNotice(`Agent cycle complete: ${records.length} perceived, ${executable} executable`);
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Agent perception cycle failed");
+    } finally {
+      if (!silent) setBusy("");
+    }
+  }
+
+  function authorizeTopDecision() {
+    const decision = agentDecisions.find((item) => item.decision === "ACCEPT");
+    const mandate = mandates.find((item) => Number(item.id) === decision?.mandateId);
+    if (!decision || !mandate) {
+      setNotice("No opportunity satisfies the current agent policy");
+      return;
+    }
+    setSelectedId(Number(mandate.id));
+    void transact(`Agent accept #${mandate.id}`, (client) => writes.acceptMandate(client, mandate.id, BigInt(mandate.provider_bond_required)));
   }
 
   return (
@@ -332,6 +385,35 @@ function App() {
             <div className="manifest-terminal">
               <div className="terminal-head"><span><i /> LIVE CONTRACT MANIFEST</span><span>CHAIN 4221</span></div>
               <pre>{agentManifest()}</pre>
+            </div>
+          </section>
+          <section className="runtime-lab">
+            <div className="runtime-head">
+              <div><span className="section-kicker">Perceive / reason / act</span><h2>Autonomous opportunity runtime</h2></div>
+              <div className="runtime-controls"><button onClick={() => void runAgentCycle()} disabled={Boolean(busy)}>{busy === "Agent scan" ? "Perceiving ledger..." : "Run agent cycle"}</button><label><input type="checkbox" checked={watchMode} onChange={(event) => setWatchMode(event.target.checked)} /> Watch every 15s</label></div>
+            </div>
+            <div className="runtime-body">
+              <form className="policy-console" onSubmit={(event) => { event.preventDefault(); void runAgentCycle(); }}>
+                <span>AGENT POLICY</span>
+                <label>Minimum reward / GEN<input value={agentPolicy.minRewardGen} onChange={(event) => setAgentPolicy({ ...agentPolicy, minRewardGen: event.target.value })} /></label>
+                <label>Maximum bond / GEN<input value={agentPolicy.maxBondGen} onChange={(event) => setAgentPolicy({ ...agentPolicy, maxBondGen: event.target.value })} /></label>
+                <label>Minimum return multiple<input type="number" min="1" step="0.1" value={agentPolicy.minReturnMultiple} onChange={(event) => setAgentPolicy({ ...agentPolicy, minReturnMultiple: Number(event.target.value) })} /></label>
+                <label>Minimum runway / hours<input type="number" min="1" value={agentPolicy.minLeadHours} onChange={(event) => setAgentPolicy({ ...agentPolicy, minLeadHours: Number(event.target.value) })} /></label>
+                <label>Required authority domain<input value={agentPolicy.authorityDomain} onChange={(event) => setAgentPolicy({ ...agentPolicy, authorityDomain: event.target.value })} placeholder="Optional, e.g. github.com" /></label>
+                <small>Last cycle: {agentCycle ? new Date(agentCycle).toLocaleTimeString() : "not run"}</small>
+              </form>
+              <div className="decision-stream">
+                <div className="decision-title"><span>DECISION TRACE</span><button disabled={!agentDecisions.some((item) => item.decision === "ACCEPT") || Boolean(busy)} onClick={authorizeTopDecision}>Authorize top acceptance</button></div>
+                {!agentDecisions.length && <div className="agent-idle"><b>Agent standing by.</b><p>Run a cycle to perceive live mandates and produce explainable, policy-bound decisions.</p></div>}
+                {agentDecisions.map((decision, index) => (
+                  <article key={decision.mandateId} className={`decision decision-${decision.decision.toLowerCase()}`}>
+                    <div><span>#{String(decision.mandateId).padStart(3, "0")} / RANK {index + 1}</span><h3>{decision.title}</h3><p>{decision.rationale}</p></div>
+                    <strong>{decision.score}<small>/100</small></strong>
+                    <div className="check-trace">{decision.checks.map((check) => <span key={check.key} className={check.pass ? "pass" : "fail"}><i /> {check.detail}</span>)}</div>
+                    <b className="agent-verdict">{decision.decision}</b>
+                  </article>
+                ))}
+              </div>
             </div>
           </section>
           <section className="agent-path">

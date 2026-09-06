@@ -119,15 +119,31 @@ The Agent Kit turns any selected on-chain mandate into a portable `agent-mandate
 
 The creation workbench also hashes local specification bytes with the browser Web Crypto API and blocks publication until the URL contains a full Git commit, the digest is a valid SHA-256 declaration, and the authority count matches the live contract policy.
 
+### Provider opportunity agent
+
+The live Agent Runtime executes a real perceive-reason-act loop over the Bradbury ledger. A configurable policy evaluates state, reward floor, bond cap, reward-to-bond return, deadline runway, authority domains, and immutable evidence integrity. It ranks opportunities and exposes every pass/fail reason. The operator can authorize the agent's top decision, which submits `accept_mandate` with the exact bond, waits for an accepted receipt, and refreshes state. Watch mode repeats perception every 15 seconds.
+
+The same policy engine powers a secret-free headless scout:
+
+```bash
+npm run agent:scan
+```
+
+See [docs/AGENT-RUNTIME.md](docs/AGENT-RUNTIME.md) for the control loop and policy variables.
+
 ## Repository map
 
 ```text
 agent-mandate/
+|-- agent/
+|   |-- policy-engine.mjs        # Shared opportunity reasoning engine
+|   `-- scout.mjs                # Headless Bradbury perception loop
 |-- contracts/
 |   `-- agent_mandate.py          # Intelligent Contract and accounting
 |-- deployments/
 |   `-- bradbury.json             # Accepted release metadata
 |-- docs/
+|   |-- AGENT-RUNTIME.md         # Perceive-reason-act architecture
 |   |-- ARCHITECTURE.md           # Trust and consensus boundaries
 |   |-- DEPLOYMENT.md             # Reproducible release procedure
 |   `-- JUDGE-WALKTHROUGH.md      # Exact reviewer path
@@ -146,6 +162,7 @@ agent-mandate/
 |-- submission-pack/
 |   `-- PROJECT-EXPLORER.md        # Portal-ready fields
 |-- tests/
+|   |-- agent-policy.test.mjs     # Agent decision behavioral tests
 |   |-- project-integration.test.mjs
 |   `-- test_contract_behavior.py
 |-- SECURITY.md
