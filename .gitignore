@@ -10,3 +10,4 @@ __pycache__/
 vite.config.js
 vite.config.d.ts
 artifacts/
+.vercel
