@@ -1,6 +1,6 @@
 import fs from "node:fs";
 
-const contract = fs.readFileSync("contracts/agent_mandate.py", "utf8");
+const contract = fs.readFileSync("contracts/agent_mandate_studio_next.py", "utf8");
 const client = fs.readFileSync("src/lib/genlayer.ts", "utf8");
 const app = fs.readFileSync("src/App.tsx", "utf8");
 const agent = fs.readFileSync("agent/policy-engine.mjs", "utf8");
@@ -17,10 +17,10 @@ for (const method of methods) {
   if (!client.includes(`\"${method}\"`)) throw new Error(`Client method missing: ${method}`);
 }
 for (const marker of [
-  "gl.nondet.web.get", "gl.nondet.web.render", "gl.nondet.exec_prompt",
-  "gl.vm.run_nondet_unsafe", "full_commit_github_plus_sha256",
-  "Validator did not reproduce the exact cure requirement",
-]) if (!contract.includes(marker)) throw new Error(`Contract invariant missing: ${marker}`);
+  "py-genlayer:5jycge4q8k23462jtb0b9fyey1s9qz928sz2nbrd9mg4sxqg2qng",
+  "gl.nondet.web.render", "gl.nondet.exec_prompt", "gl.eq_principle.prompt_comparative",
+  "VERDICT_PRINCIPLE", "sha256:",
+]) if (!contract.includes(marker)) throw new Error(`Studio Next contract invariant missing: ${marker}`);
 if (!client.includes("waitForTransactionReceipt")) throw new Error("Receipt wait missing");
 for (const marker of ["studioDevnet", "studio-dev.genlayer.com/api", "estimateTransactionFeesForWrite", "messageAllocations"]) {
   if (!client.includes(marker)) throw new Error(`Studio Next client binding missing: ${marker}`);

@@ -14,11 +14,11 @@ Agent Infrastructure, Future of Work
 
 ## One-liner
 
-Evidence-bound work agreements where autonomous agents earn escrowed payments through GenLayer consensus, exact cures, and bonded appeals.
+Evidence-bound autonomous-agent work agreements whose outcomes are judged by GenLayer consensus on Studio Next.
 
 ## Description
 
-AgentMandate is an execution and recourse protocol for autonomous-agent work. A principal locks a specification, live authorities, reward, and provider bond before an agent accepts. The provider submits a commit-pinned deliverable with a SHA-256 digest. GenLayer validators fetch exact bytes and current authority data, score every criterion, and open payout, failure, an exact cure, or an inconclusive state. The losing party gets a bonded appeal. Every UI write quotes its Studio Next transaction fees, waits for an accepted receipt, and refreshes chain state. Evidence preflight hashes local bytes and enforces immutable pins. The provider agent repeatedly perceives the Studio Next ledger on chain 61997, applies explainable reward, bond, deadline, authority, and integrity policy, ranks opportunities, and prepares the exact acceptance action. Agent Kit exports portable execution manifests, while a headless CLI runs the same policy engine without a trusted platform API.
+AgentMandate is an execution and recourse protocol for autonomous-agent work. A principal publishes a locked specification, live authority sources, and provider-bond requirement. The provider submits a commit-pinned deliverable with a SHA-256 digest. GenLayer validators render the submitted evidence and a declared authority source, then use validator consensus to return PASS, FAIL, REMEDIABLE, or INCONCLUSIVE. Every UI write quotes Studio Next transaction fees, waits for an accepted receipt, and refreshes state from the deployed contract. Evidence preflight hashes local bytes and enforces immutable pins. The provider agent perceives the Studio Next ledger on chain 61997, ranks opportunities, and prepares an acceptance action.
 
 ## How-to path
 
@@ -50,4 +50,5 @@ The steward sees real wallet writes, accepted receipt waiting, and refreshed on-
 
 - Website: https://agentmandategl.vercel.app/
 - GitHub: https://github.com/Jinchainne/agent-mandate
-- Contract: pending accepted Studio Next deployment; record it in `deployments/studio-next.json`
+- Contract: https://explorer-studio-dev.genlayer.com/contracts/0xFc127a1FfFD789B2F4697b3450d53c86D68a0bBB
+- Deployment transaction: https://explorer-studio-dev.genlayer.com/transactions/0x76ca812acefb4c3152275ee8aa6267d782f83784153f31a4043d8acae7582e3e

@@ -3,10 +3,10 @@
   "chainId": 61997,
   "rpc": "https://studio-dev.genlayer.com/api",
   "explorer": "https://explorer-studio-dev.genlayer.com",
-  "contract": "",
-  "deploymentTransaction": "",
-  "source": "contracts/agent_mandate.py",
-  "sourceSha256": "",
-  "status": "PENDING_DEPLOYMENT",
-  "instructions": "Replace empty fields only after Studio Next reports the deployment ACCEPTED."
+  "contract": "0xFc127a1FfFD789B2F4697b3450d53c86D68a0bBB",
+  "deploymentTransaction": "0x76ca812acefb4c3152275ee8aa6267d782f83784153f31a4043d8acae7582e3e",
+  "source": "contracts/agent_mandate_studio_next.py",
+  "sourceSha256": "fcb2c7094e7477c4545504e629c901a3fc42800188194656ed1d5f5c23a4202c",
+  "status": "ACCEPTED",
+  "instructions": "Verified Studio Next deployment; contract code and public schema are available on chain 61997."
 }

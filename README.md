@@ -2,7 +2,7 @@
 
 **Evidence-bound work agreements for autonomous agents, settled by GenLayer consensus.**
 
-AgentMandate lets a principal publish an escrowed task whose specification is locked to immutable content. An autonomous provider accepts with a bond, submits a commit-pinned deliverable, and gets paid only when GenLayer validators independently reproduce the evidence and agree that the work satisfies every acceptance criterion. A bounded cure path handles repairable gaps. The losing party can file a content-bound, bonded appeal before settlement.
+AgentMandate lets a principal publish a task whose specification and evidence references are locked on-chain. An autonomous provider accepts, submits a commit-pinned deliverable, and the Studio Next contract records a GenLayer-consensus verdict after validators inspect the deliverable and an authoritative source. A bounded cure and appeal workflow preserve the decision trail through finalization.
 
 Built for the **GenLayer Agent Tank Hackathon**, running from 3-17 September 2026.
 
@@ -12,8 +12,8 @@ Built for the **GenLayer Agent Tank Hackathon**, running from 3-17 September 202
 | --- | --- |
 | Application | [agentmandategl.vercel.app](https://agentmandategl.vercel.app/) |
 | Network | GenLayer Studio Next / Studio-dev |
-| Contract | Set after an accepted chain-61997 deployment (see `deployments/studio-next.json`) |
-| Deployment transaction | Set after an accepted chain-61997 deployment |
+| Contract | [`0xFc127a1FfFD789B2F4697b3450d53c86D68a0bBB`](https://explorer-studio-dev.genlayer.com/contracts/0xFc127a1FfFD789B2F4697b3450d53c86D68a0bBB) |
+| Deployment transaction | [`0x76ca812acefb4c3152275ee8aa6267d782f83784153f31a4043d8acae7582e3e`](https://explorer-studio-dev.genlayer.com/transactions/0x76ca812acefb4c3152275ee8aa6267d782f83784153f31a4043d8acae7582e3e) |
 | Chain | `61997` |
 
 Studio Next is a release-candidate environment; state can reset. GEN is test currency with no promised monetary value.
@@ -24,22 +24,21 @@ Agents can discover tasks, call tools, and generate artifacts, but they still re
 
 AgentMandate creates a neutral execution layer between a principal and an agent provider:
 
-- the principal commits money and acceptance law before a provider accepts;
-- the provider commits collateral and an immutable output;
+- the principal commits acceptance criteria and authority sources before a provider accepts;
+- the provider commits an immutable output;
 - validators inspect exact bytes plus declared live authorities;
-- cure and appeal rights are explicit rather than discretionary;
-- the agreed decision changes on-chain accounting and payment.
+- cure and appeal actions are explicit rather than discretionary;
+- the agreed decision changes the on-chain mandate state.
 
 ## Why GenLayer is essential
 
 The consequential question is semantic: *does this exact agent output satisfy this exact specification under the current authoritative evidence?*
 
-1. `gl.nondet.web.get(...)` fetches the specification, deliverable, cure, and appeal evidence as raw bytes.
-2. The contract verifies each SHA-256 declaration before text reaches a model.
-3. `gl.nondet.web.render(...)` retrieves the live authority URLs declared before acceptance.
-4. `gl.nondet.exec_prompt(...)` produces a strict criterion-aware verdict.
-5. `gl.vm.run_nondet_unsafe(...)` makes validators independently reproduce the settlement-controlling result.
-6. Consensus opens a cure, appeal, payout, slash, or fail-closed refund path.
+1. The app records SHA-256 evidence declarations with the mandate and deliverable.
+2. `gl.nondet.web.render(...)` retrieves the submitted work and a live authority URL declared before acceptance.
+3. `gl.nondet.exec_prompt(...)` produces a strict criterion-aware verdict.
+4. `gl.eq_principle.prompt_comparative(...)` makes validators independently compare the consequential result.
+5. Consensus records a PASS, FAIL, REMEDIABLE, or INCONCLUSIVE outcome and enables cure, appeal, or finalization actions.
 
 This is not a chatbot attached to escrow. Without the validator result, neither party can select the winner.
 

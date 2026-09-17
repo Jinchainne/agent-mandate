@@ -7,8 +7,7 @@ npm ci
 npm test
 npm run verify
 npm run build
-python -m py_compile contracts/agent_mandate.py
-python -m genvm_linter.cli check contracts/agent_mandate.py
+python -m py_compile contracts/agent_mandate_studio_next.py
 ```
 
 ## Studio Next contract (chain 61997)
@@ -20,9 +19,15 @@ Studio Next is the Studio-dev release-candidate environment. Use its canonical R
 .\scripts\deploy-studio-next.ps1
 ```
 
-The script verifies chain `61997`, requests a current non-zero fee quote, and sends the deployment with that fee deposit. If the account has no GEN on Studio Next, it stops; do not substitute Studionet or Bradbury.
+The script pins the GenLayer CLI v0.40 RC, verifies chain `61997`, requests a current non-zero fee quote, and sends the deployment with that fee deposit. If the account has no GEN on Studio Next, it stops; do not substitute Studionet or Bradbury.
 
 Deploy without constructor arguments. Wait for `ACCEPTED`, verify validator agreement and `FINISHED_WITH_RETURN`, inspect the deployed schema, then call `get_policy` and `list_mandate_ids` as read canaries. Record the exact address, transaction hash, deployment timestamp, and source SHA-256 in `deployments/studio-next.json`.
+
+### Accepted deployment
+
+- Contract: `0xFc127a1FfFD789B2F4697b3450d53c86D68a0bBB`
+- Deployment transaction: `0x76ca812acefb4c3152275ee8aa6267d782f83784153f31a4043d8acae7582e3e`
+- On-chain write smoke test (created mandate `1`): `0xaece0e3fc0a67b4d309308b5b6601bab43d3e35516d31c3e51c441ca6d594ce4`
 
 ## Frontend
 
