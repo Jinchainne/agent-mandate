@@ -266,7 +266,7 @@ function App() {
         <span><i /> Studio Next / chain {CHAIN_ID}</span>
         <span className="rail-notice">{notice}</span>
         {hasConfiguredContract()
-          ? <a href={`${EXPLORER_URL}/address/${CONTRACT_ADDRESS}`} target="_blank" rel="noreferrer">Contract {short(CONTRACT_ADDRESS, 5)}</a>
+          ? <a href={`${EXPLORER_URL}/contracts/${CONTRACT_ADDRESS}`} target="_blank" rel="noreferrer">Contract {short(CONTRACT_ADDRESS, 5)}</a>
           : <span>Deployment required</span>}
       </div>
 
