@@ -11,12 +11,12 @@ Built for the **GenLayer Agent Tank Hackathon**, running from 3-17 September 202
 | Surface | Value |
 | --- | --- |
 | Application | [agentmandategl.vercel.app](https://agentmandategl.vercel.app/) |
-| Network | GenLayer Bradbury testnet |
-| Contract | [`0x74D9...f617`](https://explorer-bradbury.genlayer.com/address/0x74D9b10d6D4274e9B73C507CDB3AE2E67874f617) |
-| Deployment transaction | [`0x0ddd...600e`](https://explorer-bradbury.genlayer.com/tx/0x0dddb623cd88017a58f40397661599fdd9114a13c7004863d4229d0fe359600e) |
-| Chain | `testnet-bradbury` |
+| Network | GenLayer Studio Next / Studio-dev |
+| Contract | Set after an accepted chain-61997 deployment (see `deployments/studio-next.json`) |
+| Deployment transaction | Set after an accepted chain-61997 deployment |
+| Chain | `61997` |
 
-Bradbury GEN is faucet-issued test currency with no promised monetary value.
+Studio Next is a release-candidate environment; state can reset. GEN is test currency with no promised monetary value.
 
 ## The problem
 
@@ -107,7 +107,7 @@ See [SECURITY.md](SECURITY.md) for the threat model.
 
 The React frontend has no privileged backend and no mock settlement route. It uses `genlayer-js` to:
 
-1. connect an injected Bradbury wallet;
+1. connect an injected Studio Next / Studio-dev wallet on chain `61997`;
 2. submit every public write from a visible workflow control;
 3. wait for an `ACCEPTED` transaction receipt;
 4. reject any non-accepted status;
@@ -115,13 +115,13 @@ The React frontend has no privileged backend and no mock settlement route. It us
 
 ### Autonomous agent kit
 
-The Agent Kit turns any selected on-chain mandate into a portable `agent-mandate/1.0` JSON manifest. It includes Bradbury chain identity, contract address, discovery and execution methods, immutable specification, authority boundary, reward, bond, and deadline. An autonomous provider can discover the opportunity and execute directly against the contract without relying on a platform API.
+The Agent Kit turns any selected on-chain mandate into a portable `agent-mandate/1.0` JSON manifest. It includes Studio Next chain identity, contract address, discovery and execution methods, immutable specification, authority boundary, reward, bond, and deadline. An autonomous provider can discover the opportunity and execute directly against the contract without relying on a platform API.
 
 The creation workbench also hashes local specification bytes with the browser Web Crypto API and blocks publication until the URL contains a full Git commit, the digest is a valid SHA-256 declaration, and the authority count matches the live contract policy.
 
 ### Provider opportunity agent
 
-The live Agent Runtime executes a real perceive-reason-act loop over the Bradbury ledger. A configurable policy evaluates state, reward floor, bond cap, reward-to-bond return, deadline runway, authority domains, and immutable evidence integrity. It ranks opportunities and exposes every pass/fail reason. The operator can authorize the agent's top decision, which submits `accept_mandate` with the exact bond, waits for an accepted receipt, and refreshes state. Watch mode repeats perception every 15 seconds.
+The live Agent Runtime executes a real perceive-reason-act loop over the Studio Next ledger. A configurable policy evaluates state, reward floor, bond cap, reward-to-bond return, deadline runway, authority domains, and immutable evidence integrity. It ranks opportunities and exposes every pass/fail reason. The operator can authorize the agent's top decision, which submits `accept_mandate` with the exact bond, waits for an accepted receipt, and refreshes state. Watch mode repeats perception every 15 seconds.
 
 The same policy engine powers a secret-free headless scout:
 
@@ -137,11 +137,11 @@ See [docs/AGENT-RUNTIME.md](docs/AGENT-RUNTIME.md) for the control loop and poli
 agent-mandate/
 |-- agent/
 |   |-- policy-engine.mjs        # Shared opportunity reasoning engine
-|   `-- scout.mjs                # Headless Bradbury perception loop
+|   `-- scout.mjs                # Headless Studio Next perception loop
 |-- contracts/
 |   `-- agent_mandate.py          # Intelligent Contract and accounting
 |-- deployments/
-|   `-- bradbury.json             # Accepted release metadata
+|   `-- studio-next.json          # Studio Next release metadata
 |-- docs/
 |   |-- AGENT-RUNTIME.md         # Perceive-reason-act architecture
 |   |-- ARCHITECTURE.md           # Trust and consensus boundaries
@@ -153,6 +153,7 @@ agent-mandate/
 |   |-- agent-mandate-logo.svg
 |   `-- agent-mandate-logo.png
 |-- scripts/
+|   |-- deploy-studio-next.ps1   # Quotes fees and deploys to chain 61997
 |   `-- verify-project.mjs        # Contract/client consistency gate
 |-- src/
 |   |-- lib/genlayer.ts           # Reads, writes, accepted receipt wait
@@ -190,7 +191,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Set `VITE_AGENT_MANDATE_ADDRESS` to an accepted Bradbury deployment. Never place private keys or deployment tokens in browser environment variables.
+Set `VITE_AGENT_MANDATE_ADDRESS` to an accepted Studio Next deployment on chain `61997`. Set `AGENT_MANDATE_ADDRESS` to the same address before running the scout. Never place private keys or deployment tokens in browser environment variables.
 
 ## Reference patterns
 

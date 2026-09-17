@@ -22,6 +22,12 @@ for (const marker of [
   "Validator did not reproduce the exact cure requirement",
 ]) if (!contract.includes(marker)) throw new Error(`Contract invariant missing: ${marker}`);
 if (!client.includes("waitForTransactionReceipt")) throw new Error("Receipt wait missing");
+for (const marker of ["studioDevnet", "studio-dev.genlayer.com/api", "estimateTransactionFeesForWrite", "messageAllocations"]) {
+  if (!client.includes(marker)) throw new Error(`Studio Next client binding missing: ${marker}`);
+}
+if (client.includes("testnetBradbury") || client.includes("rpc-bradbury")) {
+  throw new Error("Client still targets Bradbury instead of Studio Next");
+}
 if (!app.includes("refreshMandates")) throw new Error("Authoritative refresh missing");
 if (!app.includes('crypto.subtle.digest("SHA-256"') || !app.includes('protocol: "agent-mandate/1.0"')) {
   throw new Error("Agent manifest or immutable evidence preflight missing");

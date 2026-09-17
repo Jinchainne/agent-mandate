@@ -1,6 +1,7 @@
 import { startTransition, useEffect, useState } from "react";
 import {
   CONTRACT_ADDRESS,
+  CHAIN_ID,
   EXPLORER_URL,
   connectWallet,
   listMandateIds,
@@ -82,7 +83,7 @@ function App() {
   const [agentCycle, setAgentCycle] = useState(0);
   const [watchMode, setWatchMode] = useState(false);
   const [busy, setBusy] = useState("");
-  const [notice, setNotice] = useState("Reading the Bradbury mandate ledger");
+  const [notice, setNotice] = useState("Reading the Studio Next mandate ledger");
 
   const [draft, setDraft] = useState({
     title: "",
@@ -150,7 +151,7 @@ function App() {
 
   async function transact(label: string, action: (client: ReturnType<typeof walletClient>) => Promise<unknown>) {
     if (!account) {
-      setNotice("Connect a Bradbury wallet before signing a transaction");
+      setNotice("Connect a Studio Next wallet before signing a transaction");
       return;
     }
     setBusy(label);
@@ -183,7 +184,7 @@ function App() {
   function agentManifest() {
     return JSON.stringify({
       protocol: "agent-mandate/1.0",
-      network: { name: "GenLayer Bradbury", chainId: 4221, contract: CONTRACT_ADDRESS },
+      network: { name: "GenLayer Studio Next", chainId: CHAIN_ID, rpc: "https://studio-dev.genlayer.com/api", contract: CONTRACT_ADDRESS },
       discovery: { list: "list_mandate_ids", read: "get_mandate", policy: "get_policy" },
       execution: { accept: "accept_mandate", submit: "submit_work", evaluate: "evaluate", cure: "submit_cure", appeal: "file_appeal" },
       integrity: policy ?? { immutable_policy: "full_commit_github_plus_sha256", max_authorities: 3, max_content_bytes: 32000 },
@@ -213,7 +214,7 @@ function App() {
   async function runAgentCycle(silent = false) {
     if (!silent) {
       setBusy("Agent scan");
-      setNotice("Agent is perceiving the Bradbury mandate ledger");
+      setNotice("Agent is perceiving the Studio Next mandate ledger");
     }
     try {
       const rawIds = (await listMandateIds()) as Array<number | bigint>;
@@ -261,7 +262,7 @@ function App() {
       </header>
 
       <div className="network-rail">
-        <span><i /> Bradbury testnet</span>
+        <span><i /> Studio Next / chain {CHAIN_ID}</span>
         <span className="rail-notice">{notice}</span>
         <a href={`${EXPLORER_URL}/address/${CONTRACT_ADDRESS}`} target="_blank" rel="noreferrer">Contract {short(CONTRACT_ADDRESS, 5)}</a>
       </div>
@@ -383,7 +384,7 @@ function App() {
               <button className="secondary" onClick={downloadManifest}>Download JSON</button>
             </aside>
             <div className="manifest-terminal">
-              <div className="terminal-head"><span><i /> LIVE CONTRACT MANIFEST</span><span>CHAIN 4221</span></div>
+              <div className="terminal-head"><span><i /> LIVE CONTRACT MANIFEST</span><span>CHAIN {CHAIN_ID}</span></div>
               <pre>{agentManifest()}</pre>
             </div>
           </section>

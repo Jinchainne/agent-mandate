@@ -29,6 +29,10 @@ test("frontend binds the complete contract transaction lifecycle", () => {
   ]) assert.ok(client.includes(`\"${method}\"`), `missing client write ${method}`);
   assert.ok(client.includes("waitForTransactionReceipt"));
   assert.ok(client.includes('status !== "ACCEPTED"'));
+  assert.ok(client.includes("studioDevnet"));
+  assert.ok(client.includes("estimateTransactionFeesForWrite"));
+  assert.ok(client.includes("messageAllocations"));
+  assert.ok(!client.includes("testnetBradbury"));
   assert.ok(app.includes("refreshMandates"));
 });
 

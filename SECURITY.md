@@ -1,6 +1,6 @@
 # Security Policy
 
-AgentMandate is a Bradbury testnet experiment. Faucet-issued test GEN has no promised monetary value.
+AgentMandate targets the Studio Next / Studio-dev preview (chain `61997`). It may reset, and its test GEN has no promised monetary value.
 
 ## Trust boundaries
 

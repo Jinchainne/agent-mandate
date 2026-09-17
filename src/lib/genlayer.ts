@@ -1,11 +1,11 @@
 import { createClient } from "genlayer-js";
-import { testnetBradbury } from "genlayer-js/chains";
+import { studioDevnet } from "genlayer-js/chains";
 
-export const RPC_URL = "https://rpc-bradbury.genlayer.com";
-export const EXPLORER_URL = "https://explorer-bradbury.genlayer.com";
-export const CONTRACT_ADDRESS =
-  (import.meta.env.VITE_AGENT_MANDATE_ADDRESS as string) ||
-  "0x74D9b10d6D4274e9B73C507CDB3AE2E67874f617";
+/** Studio Next is the Studio-dev preview: chain ID 61997. */
+export const RPC_URL = "https://studio-dev.genlayer.com/api";
+export const EXPLORER_URL = "https://explorer-studio-dev.genlayer.com";
+export const CHAIN_ID = studioDevnet.id;
+export const CONTRACT_ADDRESS = (import.meta.env.VITE_AGENT_MANDATE_ADDRESS as string) || "";
 
 function address() {
   if (!/^0x[a-fA-F0-9]{40}$/.test(CONTRACT_ADDRESS) || /^0x0{40}$/.test(CONTRACT_ADDRESS)) {
@@ -15,13 +15,13 @@ function address() {
 }
 
 export function readClient() {
-  return createClient({ chain: testnetBradbury, endpoint: RPC_URL });
+  return createClient({ chain: studioDevnet, endpoint: RPC_URL });
 }
 
 export function walletClient(account: `0x${string}`) {
   if (!window.ethereum) throw new Error("Install MetaMask, Rabby, or OKX Wallet");
   return createClient({
-    chain: testnetBradbury,
+    chain: studioDevnet,
     account,
     provider: window.ethereum,
     endpoint: RPC_URL,
@@ -35,11 +35,21 @@ export async function connectWallet() {
 }
 
 async function write(client: any, functionName: string, args: any[], value?: bigint) {
-  const hash = await client.writeContract({
+  const request = {
     address: address(),
     functionName,
     args,
     ...(value === undefined ? {} : { value }),
+  };
+  // Studio Next (Consensus v0.6) requires fee funding derived from the exact call.
+  const quote = await client.estimateTransactionFeesForWrite(request);
+  const hash = await client.writeContract({
+    ...request,
+    fees: {
+      distribution: quote.distribution,
+      messageAllocations: quote.messageAllocations,
+      feeValue: quote.feeValue,
+    },
   });
   const receipt = await client.waitForTransactionReceipt({
     hash,

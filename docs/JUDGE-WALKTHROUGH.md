@@ -2,7 +2,7 @@
 
 ## Exact path
 
-1. Open the public application and connect a Bradbury-compatible wallet.
+1. Open the public application and connect a Studio Next / Studio-dev (chain `61997`) compatible wallet.
 2. Select **Create** and fund a mandate with a full-commit specification URL, its SHA-256, one live authority, reward, provider bond, and future deadline.
 3. From a different wallet, open the mandate and accept it with the exact displayed bond.
 4. As provider, submit a full-commit GitHub deliverable URL and matching SHA-256.

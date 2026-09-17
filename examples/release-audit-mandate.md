@@ -11,7 +11,7 @@ Inspect the AgentMandate release and publish an evidence-backed audit manifest f
 3. Confirm that contract compilation and GenVM validation pass.
 4. List every public write method exposed by the deployed contract schema.
 5. Record whether the live application references the same accepted contract address.
-6. Include links to the immutable source revision and Bradbury explorer contract.
+6. Include links to the immutable source revision and Studio Next explorer contract.
 
 ## Output
 

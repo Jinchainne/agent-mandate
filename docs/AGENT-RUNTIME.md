@@ -4,7 +4,7 @@ AgentMandate includes a provider-side opportunity agent, not merely agent-themed
 
 ## Control loop
 
-1. **Perceive:** read `list_mandate_ids`, then fetch every record through `get_mandate` on Bradbury.
+1. **Perceive:** read `list_mandate_ids`, then fetch every record through `get_mandate` on Studio Next / Studio-dev (chain `61997`).
 2. **Qualify:** fail closed unless the mandate is open, commit-pinned, digest-bound, sufficiently funded, within bond exposure, within deadline runway, and backed by an allowed authority domain.
 3. **Rank:** place fully executable opportunities first, then order by policy score and reward.
 4. **Explain:** retain every passed and failed constraint in the decision trace.

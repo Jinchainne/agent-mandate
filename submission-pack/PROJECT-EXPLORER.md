@@ -18,13 +18,13 @@ Evidence-bound work agreements where autonomous agents earn escrowed payments th
 
 ## Description
 
-AgentMandate is an execution and recourse protocol for autonomous-agent work. A principal locks a specification, live authorities, reward, and provider bond before an agent accepts. The provider submits a commit-pinned deliverable with a SHA-256 digest. GenLayer validators fetch exact bytes and current authority data, score every criterion, and open payout, failure, an exact cure, or an inconclusive state. The losing party gets a bonded appeal. Every UI write waits for an accepted receipt and refreshes chain state. Evidence preflight hashes local bytes and enforces immutable pins. The provider agent repeatedly perceives the Bradbury ledger, applies explainable reward, bond, deadline, authority, and integrity policy, ranks opportunities, and prepares the exact acceptance action. Agent Kit exports portable execution manifests, while a headless CLI runs the same policy engine without a trusted platform API.
+AgentMandate is an execution and recourse protocol for autonomous-agent work. A principal locks a specification, live authorities, reward, and provider bond before an agent accepts. The provider submits a commit-pinned deliverable with a SHA-256 digest. GenLayer validators fetch exact bytes and current authority data, score every criterion, and open payout, failure, an exact cure, or an inconclusive state. The losing party gets a bonded appeal. Every UI write quotes its Studio Next transaction fees, waits for an accepted receipt, and refreshes chain state. Evidence preflight hashes local bytes and enforces immutable pins. The provider agent repeatedly perceives the Studio Next ledger on chain 61997, applies explainable reward, bond, deadline, authority, and integrity policy, ranks opportunities, and prepares the exact acceptance action. Agent Kit exports portable execution manifests, while a headless CLI runs the same policy engine without a trusted platform API.
 
 ## How-to path
 
 ### 1. Create a mandate
 
-Connect a Bradbury wallet, open Create, enter the immutable specification URL and SHA-256, declare live authorities, set reward/bond/deadline, then publish.
+Connect a Studio Next / Studio-dev wallet on chain 61997, open Create, enter the immutable specification URL and SHA-256, declare live authorities, set reward/bond/deadline, then publish.
 
 ### 2. Run the provider agent
 
@@ -50,4 +50,4 @@ The steward sees real wallet writes, accepted receipt waiting, and refreshed on-
 
 - Website: https://agentmandategl.vercel.app/
 - GitHub: https://github.com/Jinchainne/agent-mandate
-- Contract: https://explorer-bradbury.genlayer.com/address/0x74D9b10d6D4274e9B73C507CDB3AE2E67874f617
+- Contract: pending accepted Studio Next deployment; record it in `deployments/studio-next.json`
