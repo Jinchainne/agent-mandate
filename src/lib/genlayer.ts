@@ -7,8 +7,12 @@ export const EXPLORER_URL = "https://explorer-studio-dev.genlayer.com";
 export const CHAIN_ID = studioDevnet.id;
 export const CONTRACT_ADDRESS = (import.meta.env.VITE_AGENT_MANDATE_ADDRESS as string) || "";
 
+export function hasConfiguredContract() {
+  return /^0x[a-fA-F0-9]{40}$/.test(CONTRACT_ADDRESS) && !/^0x0{40}$/.test(CONTRACT_ADDRESS);
+}
+
 function address() {
-  if (!/^0x[a-fA-F0-9]{40}$/.test(CONTRACT_ADDRESS) || /^0x0{40}$/.test(CONTRACT_ADDRESS)) {
+  if (!hasConfiguredContract()) {
     throw new Error("AgentMandate contract deployment is pending");
   }
   return CONTRACT_ADDRESS as `0x${string}`;

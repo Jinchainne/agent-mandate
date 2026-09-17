@@ -32,7 +32,9 @@ test("frontend binds the complete contract transaction lifecycle", () => {
   assert.ok(client.includes("studioDevnet"));
   assert.ok(client.includes("estimateTransactionFeesForWrite"));
   assert.ok(client.includes("messageAllocations"));
+  assert.ok(client.includes("hasConfiguredContract"));
   assert.ok(!client.includes("testnetBradbury"));
+  assert.ok(app.includes("Deployment required"));
   assert.ok(app.includes("refreshMandates"));
 });
 

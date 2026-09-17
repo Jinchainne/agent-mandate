@@ -3,6 +3,7 @@ import {
   CONTRACT_ADDRESS,
   CHAIN_ID,
   EXPLORER_URL,
+  hasConfiguredContract,
   connectWallet,
   listMandateIds,
   readAppeal,
@@ -264,7 +265,9 @@ function App() {
       <div className="network-rail">
         <span><i /> Studio Next / chain {CHAIN_ID}</span>
         <span className="rail-notice">{notice}</span>
-        <a href={`${EXPLORER_URL}/address/${CONTRACT_ADDRESS}`} target="_blank" rel="noreferrer">Contract {short(CONTRACT_ADDRESS, 5)}</a>
+        {hasConfiguredContract()
+          ? <a href={`${EXPLORER_URL}/address/${CONTRACT_ADDRESS}`} target="_blank" rel="noreferrer">Contract {short(CONTRACT_ADDRESS, 5)}</a>
+          : <span>Deployment required</span>}
       </div>
 
       {view === "docket" && (
